@@ -3,6 +3,9 @@ Gerenciador de Tarefas, desenvolvida em WPF
 ## Tecnologias Usadas
 .NET 9
 
+## Screenshot
+![Tela do sistema](demoWPF.png)
+
 ## Clone o repositório
 git clone https://github.com/gimidia/TaskManager.WPF
 
