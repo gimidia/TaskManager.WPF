@@ -1,0 +1,113 @@
+﻿<Window x:Class="TaskManager.WPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:TaskManager.WPF.Converters"
+        Title="Gerenciador de Tarefas" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:StatusToBooleanConverter x:Key="StatusToBooleanConverter"/>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Formulário para Adicionar/Editar -->
+        <GroupBox Header="Detalhes da Tarefa" Grid.Row="0" Margin="0,0,0,10">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Título:" Grid.Row="0" Grid.Column="0"/>
+                <TextBox Text="{Binding EditingTask.Titulo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Grid.Row="0" Grid.Column="1" Margin="5"/>
+
+                <TextBlock Text="Descrição:" Grid.Row="1" Grid.Column="0"/>
+                <TextBox Text="{Binding EditingTask.Descricao, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Grid.Row="1" Grid.Column="1" Margin="5"
+                         TextWrapping="Wrap" AcceptsReturn="True" Height="60"/>
+
+                <TextBlock Text="Status:" Grid.Row="2" Grid.Column="0"/>
+                <ComboBox ItemsSource="{Binding TaskStatuses}"
+                          SelectedIndex="{Binding EditingTask.Status, Mode=TwoWay}"
+                          Grid.Row="2" Grid.Column="1" Margin="5"/>
+
+                <TextBlock Text="Data de Conclusão:" Grid.Row="3" Grid.Column="0"/>
+                <DatePicker SelectedDate="{Binding EditingTask.DataConclusao, Mode=TwoWay}"
+                           Grid.Row="3" Grid.Column="1" Margin="5"
+                           IsEnabled="{Binding EditingTask.Status, Converter={StaticResource StatusToBooleanConverter}}"/>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2" 
+                            HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Adicionar" Click="AddTask_Click" Width="100" Margin="5,0"/>
+                    <Button Content="Atualizar" Click="UpdateTask_Click" Width="100" Margin="5,0"/>
+                    <Button Content="Excluir" Click="DeleteTask_Click" Width="100" Margin="5,0"/>
+                    <Button Content="Limpar" Click="ClearTask_Click" Width="100" Margin="5,0"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- Filtro -->
+        <GroupBox Header="Filtro" Grid.Row="1" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Text="Filtrar por Status:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding TaskStatuses}"
+                          SelectedIndex="{Binding SelectedFilterStatus, Mode=TwoWay}"
+                          Width="150"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Lista de Tarefas -->
+        <GroupBox Header="Lista de Tarefas" Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListView ItemsSource="{Binding FilteredTasks}" 
+                          SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
+                          SelectionChanged="OnTaskSelected">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Título" Width="150" 
+                                          DisplayMemberBinding="{Binding Titulo}"/>
+                            <GridViewColumn Header="Descrição" Width="200" 
+                                          DisplayMemberBinding="{Binding Descricao}"/>
+                            <GridViewColumn Header="Status" Width="100" 
+                                          DisplayMemberBinding="{Binding StatusNome}"/>
+                            <GridViewColumn Header="Data de Criação" Width="150" 
+                                          DisplayMemberBinding="{Binding DataCriacaoFormatada}"/>
+                            <GridViewColumn Header="Data de Conclusão" Width="150" 
+                                          DisplayMemberBinding="{Binding DataConclusaoFormatada}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <ProgressBar IsIndeterminate="True" Height="2" 
+                             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             Grid.Row="1"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Barra de Status -->
+        <StatusBar Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
