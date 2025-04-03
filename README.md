@@ -1,4 +1,4 @@
-Gerenciador de Tarefas, desenvolvida em .WPF
+Gerenciador de Tarefas, desenvolvida em WPF
 
 ## Tecnologias Usadas
 .NET 9
